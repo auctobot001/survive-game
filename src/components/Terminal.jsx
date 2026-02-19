@@ -1,6 +1,14 @@
 import { useEffect } from 'react';
 import { LOCATIONS, LOCATION_LIST, AGENT_TIERS, STAKING_TIERS } from '../game/constants.js';
 import { getNetEth } from '../game/engine.js';
+
+// Mirrors the RISK_PREMIUM table in market.js — display only
+const RISK_PREMIUM_LABEL = {
+  LOW:       null,
+  MEDIUM:    { label: '+20%',  color: '#d4ff00' },
+  HIGH:      { label: '+55%',  color: '#ff6b00' },
+  VERY_HIGH: { label: '+100%', color: '#ff2222' },
+};
 import MarketPanel from './MarketPanel.jsx';
 import Sidebar from './Sidebar.jsx';
 import EventLog from './EventLog.jsx';
@@ -112,6 +120,15 @@ export default function Terminal({
                 {netEth.toFixed(4)}
               </span>
             </div>
+            {/* Risk premium badge */}
+            {(() => {
+              const p = RISK_PREMIUM_LABEL[LOCATIONS[game.location]?.risk];
+              return p ? (
+                <span style={{ color: p.color, fontSize: 11 }} title="All sell prices boosted at this location">
+                  [PREMIUM {p.label}]
+                </span>
+              ) : null;
+            })()}
             {game.gasSpike && (
               <span className="c-orange" style={{ fontSize: 11 }}>[GAS SPIKE 3x]</span>
             )}
@@ -197,6 +214,12 @@ export default function Terminal({
                   <span className="c-dim" style={{ fontSize: 10 }}>
                     {loc.risk}
                   </span>
+                  {(() => {
+                    const p = RISK_PREMIUM_LABEL[loc.risk];
+                    return p ? (
+                      <span style={{ fontSize: 10, color: p.color }}>{p.label}</span>
+                    ) : null;
+                  })()}
                 </div>
               );
             })}

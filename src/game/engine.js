@@ -183,8 +183,8 @@ export function advanceTurn(state, agentTier = 'NORMAL') {
     }
   }
 
-  // Roll random event
-  const event = rollEvent(agentTier);
+  // Roll random event — location determines fire rate and reward pool
+  const event = rollEvent(agentTier, next.location);
   next = { ...next, turn: nextTurn, eventLog: log };
   if (event) {
     next = event.apply(next);
