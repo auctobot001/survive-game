@@ -9,6 +9,7 @@ import { useMarketTicker } from './hooks/useMarketTicker.js';
 import { TREASURY_ADDRESS } from './game/constants.js';
 import Terminal from './components/Terminal.jsx';
 import GameOver from './components/GameOver.jsx';
+import Disclaimer from './components/Disclaimer.jsx';
 
 export default function App() {
   const [game, dispatch] = useReducer(gameReducer, null, initGame);
@@ -89,8 +90,8 @@ export default function App() {
     tickerTrend,
   };
 
-  if (game.gameStatus === 'won' || game.gameStatus === 'lost') {
-    return (
+  const gameScreen = (game.gameStatus === 'won' || game.gameStatus === 'lost')
+    ? (
       <GameOver
         gameStatus={game.gameStatus}
         finalScore={game.finalScore}
@@ -99,14 +100,19 @@ export default function App() {
         canSubmit={canSubmit}
         address={address}
       />
+    )
+    : (
+      <Terminal
+        game={game}
+        dispatch={dispatch}
+        {...sharedProps}
+      />
     );
-  }
 
   return (
-    <Terminal
-      game={game}
-      dispatch={dispatch}
-      {...sharedProps}
-    />
+    <>
+      <Disclaimer />
+      {gameScreen}
+    </>
   );
 }

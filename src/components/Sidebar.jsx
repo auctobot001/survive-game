@@ -208,8 +208,15 @@ export default function Sidebar({
       )}
 
       {tab === 'leaderboard' && (
-        <Leaderboard feed={botchanFeed} loading={botchanLoading} />
+        <Leaderboard feed={botchanFeed} loading={botchanLoading} online={botchanOnline} />
       )}
+
+      {/* Persistent disclaimer */}
+      <div style={{ marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #1a1a1a', fontSize: 9, color: '#333', lineHeight: 1.5 }}>
+        All in-game ETH is simulated.<br />
+        No real crypto exchanged.<br />
+        Wallet verifies $SURVIVE tier only.
+      </div>
     </div>
   );
 }
