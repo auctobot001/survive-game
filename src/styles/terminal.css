@@ -1,0 +1,265 @@
+/* ─── Base Reset ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:  #00ff41;
+  --dgreen: #00aa2b;
+  --dim:    #005c18;
+  --orange: #ff6b00;
+  --red:    #ff0000;
+  --cyan:   #00d4ff;
+  --yellow: #ffff00;
+  --bg:     #0a0a0a;
+  --font:   "Courier New", Courier, monospace;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* ─── CRT Scanlines ────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── CRT Flicker ──────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  animation: crt-flicker 8s infinite;
+}
+
+@keyframes crt-flicker {
+  0%, 100%  { opacity: 1; }
+  93%        { opacity: 1; }
+  93.5%      { opacity: 0.94; }
+  94%        { opacity: 1; }
+  96.5%      { opacity: 0.97; }
+  97%        { opacity: 1; }
+}
+
+/* ─── Blink ────────────────────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.blink { animation: blink 1s step-end infinite; }
+
+/* ─── Shake (sinking island) ───────────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-3px); }
+  40%       { transform: translateX(3px); }
+  60%       { transform: translateX(-2px); }
+  80%       { transform: translateX(2px); }
+}
+.island-sinking { animation: shake 0.4s infinite; }
+
+/* ─── News ticker ──────────────────────────────────────────── */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+.ticker-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-scroll 40s linear infinite;
+}
+
+/* ─── Text colours ─────────────────────────────────────────── */
+.c-green  { color: var(--green);  }
+.c-orange { color: var(--orange); }
+.c-red    { color: var(--red);    }
+.c-cyan   { color: var(--cyan);   }
+.c-yellow { color: var(--yellow); }
+.c-dim    { color: var(--dim);    }
+.c-white  { color: #cccccc;       }
+
+/* ─── Glow ─────────────────────────────────────────────────── */
+.glow {
+  text-shadow:
+    0 0 4px var(--green),
+    0 0 10px rgba(0,255,65,0.25);
+}
+.glow-orange { text-shadow: 0 0 6px var(--orange); }
+.glow-red    { text-shadow: 0 0 6px var(--red);    }
+.glow-cyan   { text-shadow: 0 0 6px var(--cyan);   }
+
+/* ─── Buttons ──────────────────────────────────────────────── */
+.btn {
+  background: transparent;
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 1px 6px;
+  transition: background 0.1s, color 0.1s;
+  user-select: none;
+}
+.btn:hover         { background: var(--green);  color: var(--bg); }
+.btn:disabled      { opacity: 0.35; cursor: not-allowed; }
+
+.btn-orange        { border-color: var(--orange); color: var(--orange); }
+.btn-orange:hover  { background: var(--orange);   color: var(--bg); }
+
+.btn-red           { border-color: var(--red);    color: var(--red); }
+.btn-red:hover     { background: var(--red);       color: var(--bg); }
+
+.btn-cyan          { border-color: var(--cyan);   color: var(--cyan); }
+.btn-cyan:hover    { background: var(--cyan);      color: var(--bg); }
+
+.btn-yellow        { border-color: var(--yellow); color: var(--yellow); }
+.btn-yellow:hover  { background: var(--yellow);    color: var(--bg); }
+
+.btn-large {
+  padding: 4px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* ─── Input ────────────────────────────────────────────────── */
+.term-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--green);
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 13px;
+  width: 60px;
+  outline: none;
+  text-align: right;
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track  { background: var(--bg); }
+::-webkit-scrollbar-thumb  { background: var(--dim); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--green); }
+
+/* ─── Terminal layout ──────────────────────────────────────── */
+.terminal-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 6px;
+  gap: 0;
+}
+
+.terminal-box {
+  border: 1px solid var(--green);
+  overflow: hidden;
+}
+
+.terminal-header {
+  border-bottom: 1px solid var(--green);
+  padding: 3px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.terminal-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.terminal-left {
+  flex: 3;
+  border-right: 1px solid var(--green);
+  overflow-y: auto;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.terminal-right {
+  flex: 2;
+  overflow-y: auto;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.terminal-footer {
+  border-top: 1px solid var(--green);
+  padding: 4px 8px;
+  flex-shrink: 0;
+  max-height: 110px;
+  overflow-y: auto;
+}
+
+.terminal-ticker {
+  border-top: 1px solid var(--dim);
+  padding: 2px 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.section-divider {
+  border-top: 1px solid var(--dim);
+  margin: 4px 0;
+}
+
+.section-label {
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+/* ─── Game over screen ─────────────────────────────────────── */
+.gameover-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 16px;
+  padding: 24px;
+}
+
+.skull-art {
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* ─── Wallet connect ───────────────────────────────────────── */
+.wallet-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
