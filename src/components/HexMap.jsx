@@ -8,23 +8,22 @@ const RISK_COLORS = {
   VERY_HIGH: '#ff2222',
 };
 
-// ── Short labels ──────────────────────────────────────────────────────────────
-const SHORT_LABELS = {
-  TESTNET:         'TEST',
-  UNISWAP:         'UNI',
-  ONCHAIN_SF:      'SF',
-  SEPOLIA:         'SEP',
-  NFT_PARIS:       'PARIS',
-  ETH_DENVER:      'DENVR',
-  STOWE:           'STOWE',
-  ART_BASEL_MIAMI: 'MIAMI',
-};
+// Split a display label into 1 or 2 lines for the hex tile.
+// e.g. "ART BASEL MIAMI" → ["ART BASEL", "MIAMI"]
+//      "NFT PARIS"       → ["NFT", "PARIS"]
+//      "TESTNET"         → ["TESTNET"]
+function splitLabel(label) {
+  const words = label.split(' ');
+  if (words.length <= 1) return [label];
+  if (words.length === 2) return words;
+  return [words.slice(0, -1).join(' '), words[words.length - 1]];
+}
 
 // ── Geometry ──────────────────────────────────────────────────────────────────
 // GRID_R drives layout spacing; DRAW_R drives actual hex size.
 // Gap between adjacent hexes ≈ √3 × (GRID_R − DRAW_R) ≈ 7 px.
-const GRID_R    = 16;
-const DRAW_R    = 12;
+const GRID_R    = 13.6;   // 16 × 0.85
+const DRAW_R    = 10.2;   // 12 × 0.85
 const SQRT3     = Math.sqrt(3);
 const COL_SPACE = SQRT3 * GRID_R;   // ≈ 27.7
 const ROW_SPACE = GRID_R * 1.5;     // 24
@@ -183,7 +182,7 @@ export default function HexMap({ currentLocation, onTravel, gasSpike }) {
           const { x, y }  = CENTERS[locId];
           const isHere    = locId === currentLocation;
           const rc        = RISK_COLORS[loc?.risk] || '#00ff41';
-          const label     = SHORT_LABELS[locId] || locId;
+          const lines     = splitLabel(loc?.label || locId);
           const drawR     = isHere ? DRAW_R + 1 : DRAW_R;   // active tile is 1px larger
 
           return (
@@ -229,30 +228,41 @@ export default function HexMap({ currentLocation, onTravel, gasSpike }) {
                 />
               )}
 
-              {/* ── Label */}
-              <text
-                x={x}
-                y={y + (isHere ? -1.5 : 0.5)}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontSize={isHere ? 4.8 : 4.2}
-                fontFamily="'Courier New', Courier, monospace"
-                fontWeight={isHere ? '700' : '400'}
-                fill={isHere ? '#ffffff' : rc}
-                opacity={isHere ? 1 : 0.75}
-                style={{ pointerEvents: 'none', userSelect: 'none', letterSpacing: '0.3px' }}
-              >
-                {label}
-              </text>
+              {/* ── Label (1 or 2 lines, precisely centred) */}
+              {(() => {
+                const multi   = lines.length > 1;
+                const lineH   = 2.1;                    // line-height in SVG units
+                const fSize   = isHere ? 1.9 : 1.7;    // 35% smaller
+                // Vertical centre of the text block:
+                // active tile shifts up to leave room for ◆ below
+                const blockCY = isHere ? y - (multi ? 2.2 : 1.5) : y;
+                const line1Y  = multi ? blockCY - lineH / 2 : blockCY;
+                const line2Y  = blockCY + lineH / 2;
+                return (
+                  <text
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={fSize}
+                    fontFamily="'Courier New', Courier, monospace"
+                    fontWeight={isHere ? '700' : '400'}
+                    fill={isHere ? '#ffffff' : rc}
+                    opacity={isHere ? 1 : 0.75}
+                    style={{ pointerEvents: 'none', userSelect: 'none', letterSpacing: '0.2px' }}
+                  >
+                    <tspan x={x} y={line1Y}>{lines[0]}</tspan>
+                    {multi && <tspan x={x} y={line2Y}>{lines[1]}</tspan>}
+                  </text>
+                );
+              })()}
 
               {/* ── "HERE" sub-label for active tile */}
               {isHere && (
                 <text
                   x={x}
-                  y={y + 5.5}
+                  y={y + 4.5}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={3.2}
+                  fontSize={1.7}
                   fontFamily="'Courier New', Courier, monospace"
                   fill={rc}
                   opacity={0.7}
