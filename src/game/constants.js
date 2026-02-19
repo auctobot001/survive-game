@@ -116,9 +116,9 @@ export const AGENT_TIERS = {
 
 export const STAKING_TIERS = {
   SPECTATOR: { id: 'SPECTATOR', label: 'SPECTATOR', minBalance: 0, desc: 'Play but no leaderboard.' },
-  DRIFTER:   { id: 'DRIFTER',   label: 'DRIFTER',   minBalance: 1000,    desc: 'Submit scores to leaderboard.' },
-  CREW:      { id: 'CREW',      label: 'CREW',      minBalance: 10000,   desc: 'Unlock insider tip events + REPUTATION trading.' },
-  OPERATOR:  { id: 'OPERATOR',  label: 'OPERATOR',  minBalance: 100000,  desc: 'Post votes via botchan.' },
+  DRIFTER:   { id: 'DRIFTER',   label: 'GRIFTER',   minBalance: 1000,    desc: 'Submit scores to leaderboard.' },
+  CREW:      { id: 'CREW',      label: 'SHILL',     minBalance: 10000,   desc: 'Unlock insider tip events + REPUTATION trading.' },
+  OPERATOR:  { id: 'OPERATOR',  label: 'MFER',      minBalance: 100000,  desc: 'Post votes via botchan.' },
   WHALE:     { id: 'WHALE',     label: 'WHALE',     minBalance: 500000,  desc: 'Send 0.001 ETH to treasury.' },
   GOD_MODE:  { id: 'GOD_MODE',  label: 'GOD MODE',  minBalance: 1000000, desc: 'Name a child agent via botchan.' },
 };
