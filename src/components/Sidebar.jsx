@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AGENT_TIERS, STAKING_TIERS, RESOURCES } from '../game/constants.js';
 import Leaderboard from './Leaderboard.jsx';
+import HexMap from './HexMap.jsx';
 
 export default function Sidebar({
   agentEth,
@@ -19,6 +20,7 @@ export default function Sidebar({
   onWhaleAction,
   onGodMode,
   game,
+  dispatch,
 }) {
   const [transmitMsg, setTransmitMsg] = useState('');
   const [godInput, setGodInput]       = useState('');
@@ -142,6 +144,20 @@ export default function Sidebar({
               </div>
             ))}
           </div>
+
+          <div className="section-divider" />
+
+          {/* Hex map */}
+          {game && (
+            <HexMap
+              currentLocation={game.location}
+              onTravel={dispatch
+                ? (dest) => dispatch({ type: 'TRAVEL', destination: dest, agentTier })
+                : undefined
+              }
+              gasSpike={game.gasSpike}
+            />
+          )}
 
           {/* Botchan OPERATOR+ transmit */}
           {isConnected && ['OPERATOR', 'WHALE', 'GOD_MODE'].includes(stakingTier) && (

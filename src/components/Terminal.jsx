@@ -254,6 +254,7 @@ export default function Terminal({
             onWhaleAction={onWhaleAction}
             onGodMode={onGodMode}
             game={game}
+            dispatch={dispatch}
           />
         </div>
       </div>
