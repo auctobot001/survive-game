@@ -161,7 +161,7 @@ export const SCAM_RISK = {
   ONCHAIN_SF:      0.25,
 };
 
-export const MAX_TURNS = 30;
+export const MAX_TURNS = 20;
 export const STARTING_ETH = 0.05;
 export const STARTING_DEBT = 0.02;
 export const BASE_TRAVEL_COST = 0.001;
@@ -169,4 +169,4 @@ export const BASE_TRAVEL_COST = 0.001;
 export const AGENT_ADDRESS    = '0xFC426DFeAe55Dae2f936a592450C9ECEa87A5736'; // Clawtomaton LP fee collector (1.31 ETH)
 export const TOKEN_ADDRESS    = '0xf79e1B46F9E62182B7594d719d146c19A7D09619'; // $SURVIVE token contract
 export const TREASURY_ADDRESS = '0xFC426DFeAe55Dae2f936a592450C9ECEa87A5736'; // same as agent wallet
-export const BASE_RPC_URL = import.meta.env.VITE_BASE_RPC_URL || 'https://mainnet.base.org';
+export const BASE_RPC_URL = import.meta.env?.VITE_BASE_RPC_URL || 'https://mainnet.base.org';

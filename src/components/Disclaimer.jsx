@@ -4,12 +4,12 @@ export default function Disclaimer({ onAccept }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const seen = localStorage.getItem('survive_disclaimer_v1');
+    const seen = localStorage.getItem('survive_disclaimer_v2');
     if (!seen) setVisible(true);
   }, []);
 
   function accept() {
-    localStorage.setItem('survive_disclaimer_v1', '1');
+    localStorage.setItem('survive_disclaimer_v2', '1');
     setVisible(false);
     onAccept?.();
   }
@@ -49,16 +49,19 @@ export default function Disclaimer({ onAccept }) {
           </p>
           <p style={{ marginTop: 8 }}>
             <span style={{ color: '#00ff41' }}>Wallet connection</span> is optional and used only to verify your{' '}
-            <span style={{ color: '#00d4ff' }}>$SURVIVE token staking tier</span>.
+            <span style={{ color: '#00d4ff' }}>$SURVIVE token staking tier & booster tokens</span>.
             Higher tiers unlock gameplay features and leaderboard access.
           </p>
           <p style={{ marginTop: 8 }}>
             <span style={{ color: '#00ff41' }}>Onchain leaderboard</span> submissions are real
             Base transactions (tiny gas cost). Your score is recorded permanently.
           </p>
-          <p style={{ marginTop: 8, color: '#555', fontSize: 11 }}>
+          <p style={{ marginTop: 8, color: '#888', fontSize: 11 }}>
             Agent state (SURVIVE treasury) is read live from Base mainnet.
             NFT rewards for top survivors — coming in a future update.
+          </p>
+          <p style={{ marginTop: 8, color: '#ff6b00', fontSize: 11 }}>
+            Game is in beta. Play at your own risk.
           </p>
         </div>
 
