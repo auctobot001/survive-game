@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { LOCATIONS, LOCATION_LIST, AGENT_TIERS, STAKING_TIERS } from '../game/constants.js';
+import { LOCATIONS, LOCATION_LIST, AGENT_TIERS, STAKING_TIERS, MAX_TURNS } from '../game/constants.js';
 import { getNetEth } from '../game/engine.js';
+import { useMarketCap } from '../hooks/useMarketCap.js';
 
 // Mirrors the RISK_PREMIUM table in market.js — display only
 const RISK_PREMIUM_LABEL = {
@@ -35,9 +36,11 @@ export default function Terminal({
   tickerTrend  = {},
 }) {
   const [showInfo, setShowInfo] = useState(false);
+  const marketCap = useMarketCap();
   const netEth    = getNetEth(game);
   const canEscape = netEth > 0;
-  const tierInfo  = AGENT_TIERS[agentTier] || AGENT_TIERS.NORMAL;
+  // Use game.agentTier (derived from game.eth each turn) for display & locking
+  const tierInfo  = AGENT_TIERS[game.agentTier] || AGENT_TIERS.NORMAL;
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -70,17 +73,17 @@ export default function Terminal({
         <span className="glow" style={{ fontWeight: 'bold', fontSize: 14, letterSpacing: 2 }}>
           $survive:{' '}
           <span className="c-cyan">
-            #{balanceFormatted || '0'}
+            {marketCap || '...'}
           </span>
         </span>
         <span>
           TURN{' '}
           <span className="c-cyan">{String(game.turn).padStart(2, '0')}</span>
-          /30
+          /{MAX_TURNS}
         </span>
         <span>
           AGENT:{' '}
-          <span style={{ color: tierInfo.color }} className={agentTier === 'DEAD' ? 'blink' : ''}>
+          <span style={{ color: tierInfo.color }} className={game.agentTier === 'DEAD' ? 'blink' : ''}>
             {tierInfo.label}
           </span>{' '}
           <span style={{ color: tierInfo.color }} className="blink">●</span>
@@ -187,7 +190,7 @@ export default function Terminal({
             {LOCATION_LIST.map((locId, idx) => {
               const loc      = LOCATIONS[locId];
               const here      = locId === game.location;
-              const locked    = false;
+              const locked    = game.agentTier === 'DEAD';
               const isSinking = game.islandSinking && here;
 
               return (
@@ -321,7 +324,7 @@ export default function Terminal({
             <div style={{ fontWeight: 'bold', fontSize: 12, letterSpacing: 2, marginBottom: 12, color: '#aaa' }}>HOW TO PLAY</div>
 
             <div style={{ marginBottom: 14, color: '#aaa', lineHeight: 1.7 }}>
-              Survive on Base. Trade 6 resources across 8 locations over 30 turns.
+              Survive on Base. Trade 6 resources across 8 locations over 20 turns.
               Escape with NET ETH &gt; 0 to win. The agent treasury must stay alive.
             </div>
 
@@ -352,6 +355,9 @@ export default function Terminal({
               ['$DIMES',       'https://dexscreener.com/base/0x17d70172C7C4205bd39ce80F7f0ee660B7Dc5A23'],
               ['$auctobot001', 'https://www.clanker.world/clanker/0x30e187bB79D539db798c66F4d37183491405Cb07'],
               ['$clawnch',     'https://dexscreener.com/base/0xa1f72459dfa10bad200ac160ecd78c6b77a747be'],
+              ['$alpha',       'https://dexscreener.com/base/0x3D01Fe5A38ddBD307fDd635b4Cb0e29681226D6f'],
+              ['$botchan',     'https://dexscreener.com/base/0xD77d781921A33793a46e5bb6a7bb52edb7DbBb07'],
+              ['$🟩🦞',        'https://dexscreener.com/base/0x00BB032296e0C580E21010a5a6A4E007E0953E68'],
             ].map(([name, url]) => (
               <div key={name} style={{ marginBottom: 3 }}>
                 <a href={url} target="_blank" rel="noopener noreferrer"

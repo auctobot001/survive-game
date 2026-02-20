@@ -1,7 +1,40 @@
 import { useState } from 'react';
+import { useReadContracts, useAccount } from 'wagmi';
+import { erc20Abi } from 'viem';
 import { AGENT_TIERS, STAKING_TIERS, RESOURCES } from '../game/constants.js';
 import Leaderboard from './Leaderboard.jsx';
 import HexMap from './HexMap.jsx';
+
+const BOOST_TOKENS = [
+  { name: '$CLANKER',     address: '0x1bc0c42215582d5A085795f4baDbaC3ff36d1Bcb', url: 'https://www.clanker.world/clanker/0x1bc0c42215582d5A085795f4baDbaC3ff36d1Bcb' },
+  { name: '$BNKR',        address: '0x22aF33FE49fD1Fa80c7149773dDe5890D3c76F3b', url: 'https://www.clanker.world/clanker/0x22aF33FE49fD1Fa80c7149773dDe5890D3c76F3b' },
+  { name: '$DRB',         address: '0x3ec2156d4c0a9cbdab4a016633b7bcf6a8d68ea2', url: 'https://dexscreener.com/base/0x3ec2156d4c0a9cbdab4a016633b7bcf6a8d68ea2' },
+  { name: '$DIMES',       address: '0x17d70172C7C4205bd39ce80F7f0ee660B7Dc5A23', url: 'https://dexscreener.com/base/0x17d70172C7C4205bd39ce80F7f0ee660B7Dc5A23' },
+  { name: '$auctobot001', address: '0x30e187bB79D539db798c66F4d37183491405Cb07', url: 'https://www.clanker.world/clanker/0x30e187bB79D539db798c66F4d37183491405Cb07' },
+  { name: '$clawnch',     address: '0xa1f72459dfa10bad200ac160ecd78c6b77a747be', url: 'https://dexscreener.com/base/0xa1f72459dfa10bad200ac160ecd78c6b77a747be' },
+  { name: '$alpha',       address: '0x3D01Fe5A38ddBD307fDd635b4Cb0e29681226D6f', url: 'https://dexscreener.com/base/0x3D01Fe5A38ddBD307fDd635b4Cb0e29681226D6f' },
+  { name: '$botchan',     address: '0xD77d781921A33793a46e5bb6a7bb52edb7DbBb07', url: 'https://dexscreener.com/base/0xD77d781921A33793a46e5bb6a7bb52edb7DbBb07' },
+  { name: '$🟩🦞',        address: '0x00BB032296e0C580E21010a5a6A4E007E0953E68', url: 'https://dexscreener.com/base/0x00BB032296e0C580E21010a5a6A4E007E0953E68' },
+];
+
+function useBoostTokenBalances() {
+  const { address, isConnected } = useAccount();
+  const { data } = useReadContracts({
+    contracts: BOOST_TOKENS.map(t => ({
+      address: t.address,
+      abi: erc20Abi,
+      functionName: 'balanceOf',
+      args: [address],
+      chainId: 8453, // Base mainnet
+    })),
+    query: { enabled: isConnected && !!address },
+  });
+  const held = BOOST_TOKENS.map((_, i) => {
+    const result = data?.[i];
+    return result?.status === 'success' && result.result > 0n;
+  });
+  return { held, isConnected, address };
+}
 
 export default function Sidebar({
   agentEth,
@@ -25,8 +58,10 @@ export default function Sidebar({
   const [transmitMsg, setTransmitMsg] = useState('');
   const [godInput, setGodInput]       = useState('');
   const [tab, setTab]                 = useState('status'); // 'status' | 'leaderboard'
+  const { held: boostHeld, isConnected: walletConnected } = useBoostTokenBalances();
 
-  const tierInfo    = AGENT_TIERS[agentTier] || AGENT_TIERS.NORMAL;
+  // Use game.agentTier (eth-derived) for agent status — reflects buy/sell in real time
+  const tierInfo    = AGENT_TIERS[game?.agentTier || agentTier] || AGENT_TIERS.NORMAL;
   const stakingInfo = STAKING_TIERS[stakingTier] || STAKING_TIERS.SPECTATOR;
 
   const netEth = game
@@ -64,27 +99,27 @@ export default function Sidebar({
             <div className="section-label">AGENT STATUS</div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span className="c-dim">Tier:</span>
-              <span style={{ color: tierInfo.color }} className={agentTier === 'DEAD' ? 'blink' : ''}>
+              <span style={{ color: tierInfo.color }} className={game?.agentTier === 'DEAD' ? 'blink' : ''}>
                 {tierInfo.label}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span className="c-dim">Treasury:</span>
+              <span className="c-dim">Compute:</span>
               <span style={{ color: tierInfo.color }}>
-                {agentEth !== null ? agentEth.toFixed(6) : '...'} ETH
+                {game?.eth != null ? game.eth.toFixed(4) : (agentEth != null ? agentEth.toFixed(4) : '...')} ETH
               </span>
             </div>
-            {agentTier === 'LOW_COMPUTE' && (
+            {game?.agentTier === 'LOW_COMPUTE' && (
               <div className="c-yellow" style={{ fontSize: 10, marginTop: 2 }}>
-                Something is consuming the agent's compute...
+                Compute depleting — buy resources wisely.
               </div>
             )}
-            {agentTier === 'CRITICAL' && (
+            {game?.agentTier === 'CRITICAL' && (
               <div className="c-orange glow-orange" style={{ fontSize: 10, marginTop: 2 }}>
                 CRITICAL: Island destabilizing. Evacuate.
               </div>
             )}
-            {agentTier === 'DEAD' && (
+            {game?.agentTier === 'DEAD' && (
               <div className="c-red glow-red blink" style={{ fontSize: 10, marginTop: 2 }}>
                 AGENT DEAD. SURVIVE_ISLAND LOCKED.
               </div>
@@ -150,25 +185,22 @@ export default function Sidebar({
             {/* Right: token boost links */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="section-label">TOKENS</div>
-              {[
-                ['$CLANKER',     'https://www.clanker.world/clanker/0x1bc0c42215582d5A085795f4baDbaC3ff36d1Bcb'],
-                ['$BNKR',        'https://www.clanker.world/clanker/0x22aF33FE49fD1Fa80c7149773dDe5890D3c76F3b'],
-                ['$DRB',         'https://dexscreener.com/base/0x3ec2156d4c0a9cbdab4a016633b7bcf6a8d68ea2'],
-                ['$DIMES',       'https://dexscreener.com/base/0x17d70172C7C4205bd39ce80F7f0ee660B7Dc5A23'],
-                ['$auctobot001', 'https://www.clanker.world/clanker/0x30e187bB79D539db798c66F4d37183491405Cb07'],
-                ['$clawnch',     'https://dexscreener.com/base/0xa1f72459dfa10bad200ac160ecd78c6b77a747be'],
-              ].map(([name, url]) => (
-                <div key={name} style={{ fontSize: 11, marginBottom: 1 }}>
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: '#00d4ff', textDecoration: 'none' }}
-                    onMouseOver={e => e.target.style.textDecoration = 'underline'}
-                    onMouseOut={e => e.target.style.textDecoration = 'none'}
-                  >{name}</a>
-                </div>
-              ))}
+              {BOOST_TOKENS.map((t, i) => {
+                const held = boostHeld[i];
+                const color = walletConnected ? (held ? '#00ff41' : '#ff2222') : '#00d4ff';
+                return (
+                  <div key={t.name} style={{ fontSize: 11, marginBottom: 1 }}>
+                    <a
+                      href={t.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color, textDecoration: 'none' }}
+                      onMouseOver={e => e.target.style.textDecoration = 'underline'}
+                      onMouseOut={e => e.target.style.textDecoration = 'none'}
+                    >{t.name}</a>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

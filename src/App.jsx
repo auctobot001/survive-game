@@ -25,12 +25,8 @@ export default function App() {
   const { disconnect }            = useDisconnect();
   const { sendTransaction }       = useSendTransaction();
 
-  // Keep game engine aware of live agent tier
-  useEffect(() => {
-    if (agentTier !== game.agentTier) {
-      dispatch({ type: 'SET_AGENT_TIER', tier: agentTier });
-    }
-  }, [agentTier, game.agentTier]);
+  // agentTier is now derived from game.eth each turn (see engine.js advanceTurn).
+  // The on-chain agentTier/agentEth are passed as props for display only.
 
   const handleConnect = useCallback(() => {
     const preferred = connectors.find(c => c.id === 'coinbaseWallet') || connectors[0];

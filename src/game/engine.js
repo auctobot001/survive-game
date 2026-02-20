@@ -2,6 +2,15 @@ import { LOCATIONS, MAX_TURNS, STARTING_ETH, STARTING_DEBT, BASE_TRAVEL_COST } f
 import { generatePrices, getInventoryValue } from './market.js';
 import { rollEvent } from './events.js';
 
+/** Derive agent tier from ETH balance — mirrors useSurviveAgent logic */
+function getAgentTierFromEth(eth) {
+  if (!eth || eth <= 0)  return 'DEAD';
+  if (eth > 0.01)        return 'NORMAL';
+  if (eth >= 0.001)      return 'LOW_COMPUTE';
+  if (eth >= 0.0001)     return 'CRITICAL';
+  return 'DEAD';
+}
+
 export function initGame() {
   const prices = generatePrices('TESTNET');
   return {
@@ -148,7 +157,7 @@ export function advanceTurn(state, agentTier = 'NORMAL') {
     ruggedResource:  null,
     eventMessage:    null,
     eventColor:      null,
-    agentTier,
+    agentTier,  // will be overridden below by eth-derived tier
   };
 
   let log = next.eventLog;
@@ -175,16 +184,20 @@ export function advanceTurn(state, agentTier = 'NORMAL') {
   if (nextTurn > MAX_TURNS) {
     const netEth = getNetEth(next);
     if (netEth > 0) {
-      log = addLog(log, `> TIME UP (30 turns). NET: ${netEth.toFixed(6)} ETH — YOU WIN!`, 'cyan');
+      log = addLog(log, `> TIME UP (${MAX_TURNS} turns). NET: ${netEth.toFixed(6)} ETH — YOU WIN!`, 'cyan');
       return { ...next, gameStatus: 'won', finalScore: netEth, turn: MAX_TURNS, eventLog: log };
     } else {
-      log = addLog(log, `> TIME UP (30 turns). Failed to escape. GAME OVER.`, 'red');
+      log = addLog(log, `> TIME UP (${MAX_TURNS} turns). Failed to escape. GAME OVER.`, 'red');
       return { ...next, gameStatus: 'lost', finalScore: netEth, turn: MAX_TURNS, eventLog: log };
     }
   }
 
+  // Derive agentTier from current ETH — makes buy/sell directly affect agent health
+  const derivedAgentTier = getAgentTierFromEth(next.eth);
+  next = { ...next, agentTier: derivedAgentTier };
+
   // Roll random event — location determines fire rate and reward pool
-  const event = rollEvent(agentTier, next.location);
+  const event = rollEvent(derivedAgentTier, next.location);
   next = { ...next, turn: nextTurn, eventLog: log };
   if (event) {
     next = event.apply(next);
@@ -198,10 +211,10 @@ export function advanceTurn(state, agentTier = 'NORMAL') {
     log = next.eventLog;
   }
 
-  // Regenerate market prices for current location
+  // Regenerate market prices for current location using eth-derived tier
   const newPrices = generatePrices(
     next.location,
-    agentTier,
+    derivedAgentTier,
     next.ruggedResource,
     next.diamondResource,
   );
