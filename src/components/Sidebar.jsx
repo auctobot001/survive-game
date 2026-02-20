@@ -132,17 +132,44 @@ export default function Sidebar({
 
           <div className="section-divider" />
 
-          {/* Inventory */}
-          <div>
-            <div className="section-label">INVENTORY</div>
-            {RESOURCES.map(r => (
-              <div key={r} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span className="c-dim">{r}:</span>
-                <span className={inventory[r] > 0 ? 'c-green' : 'c-dim'}>
-                  {inventory[r] ?? 0}
-                </span>
-              </div>
-            ))}
+          {/* Inventory + Token boosts */}
+          <div style={{ display: 'flex', gap: 10 }}>
+            {/* Left: resource inventory */}
+            <div style={{ flex: '0 0 auto' }}>
+              <div className="section-label">INVENTORY</div>
+              {RESOURCES.map(r => (
+                <div key={r} style={{ display: 'flex', gap: 6, fontSize: 12 }}>
+                  <span className="c-dim">{r}:</span>
+                  <span className={inventory[r] > 0 ? 'c-green' : 'c-dim'}>
+                    {inventory[r] ?? 0}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Right: token boost links */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="section-label">TOKENS</div>
+              {[
+                ['$CLANKER',     'https://www.clanker.world/clanker/0x1bc0c42215582d5A085795f4baDbaC3ff36d1Bcb'],
+                ['$BNKR',        'https://www.clanker.world/clanker/0x22aF33FE49fD1Fa80c7149773dDe5890D3c76F3b'],
+                ['$DRB',         'https://dexscreener.com/base/0x3ec2156d4c0a9cbdab4a016633b7bcf6a8d68ea2'],
+                ['$DIMES',       'https://dexscreener.com/base/0x17d70172C7C4205bd39ce80F7f0ee660B7Dc5A23'],
+                ['$auctobot001', 'https://www.clanker.world/clanker/0x30e187bB79D539db798c66F4d37183491405Cb07'],
+                ['$clawnch',     'https://dexscreener.com/base/0xa1f72459dfa10bad200ac160ecd78c6b77a747be'],
+              ].map(([name, url]) => (
+                <div key={name} style={{ fontSize: 11, marginBottom: 1 }}>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#00d4ff', textDecoration: 'none' }}
+                    onMouseOver={e => e.target.style.textDecoration = 'underline'}
+                    onMouseOut={e => e.target.style.textDecoration = 'none'}
+                  >{name}</a>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="section-divider" />

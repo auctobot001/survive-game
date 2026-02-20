@@ -314,29 +314,56 @@ export default function Terminal({
             style={{
               background: '#050f05', border: '1px solid #00ff41', padding: '20px 24px',
               fontFamily: "'Courier New', monospace", color: '#00ff41', fontSize: 12,
-              maxWidth: 480, width: '90%', maxHeight: '80vh', overflowY: 'auto',
+              maxWidth: 500, width: '90%', maxHeight: '80vh', overflowY: 'auto',
             }}
           >
-            <div style={{ fontWeight: 'bold', fontSize: 14, marginBottom: 12, letterSpacing: 2 }}>
-              $SURVIVE — HOW TO PLAY
-            </div>
+            <div style={{ fontWeight: 'bold', fontSize: 15, letterSpacing: 3 }}>SURVIVE - CRYPTO</div>
+            <div style={{ fontWeight: 'bold', fontSize: 12, letterSpacing: 2, marginBottom: 12, color: '#aaa' }}>HOW TO PLAY</div>
 
-            <div style={{ marginBottom: 10, color: '#aaa' }}>
-              Dope Wars on Base. Trade 6 resources across 8 locations over 30 turns.
+            <div style={{ marginBottom: 14, color: '#aaa', lineHeight: 1.7 }}>
+              Survive on Base. Trade 6 resources across 8 locations over 30 turns.
               Escape with NET ETH &gt; 0 to win. The agent treasury must stay alive.
             </div>
 
-            <div style={{ fontWeight: 'bold', marginBottom: 6 }}>STAKING TIERS</div>
-            {Object.values(STAKING_TIERS).map(t => (
-              <div key={t.id} style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
-                <span style={{ width: 90, color: '#00d4ff' }}>{t.label}</span>
-                <span style={{ color: '#555', width: 80 }}>{t.minBalance.toLocaleString()}+</span>
-                <span style={{ color: '#aaa' }}>{t.desc}</span>
+            <div style={{ fontWeight: 'bold', marginBottom: 8 }}>STAKING TIERS</div>
+            {[
+              ['GRIFTER',  '0+',          'Play but no leaderboard.'],
+              ['SHILL',    '1,000+',       'Submit scores to leaderboard.'],
+              ['FARMER',   '10,000+',      'Unlock insider tip events + REPUTATION trading.'],
+              ['MFER',     '100,000+',     'Post votes via botchan.'],
+              ['WHALE',    '500,000+',     'Send 0.001 ETH to treasury.'],
+              ['GOD MODE', '1,000,000+',   'Name a child agent via botchan.'],
+            ].map(([label, bal, desc]) => (
+              <div key={label} style={{ display: 'flex', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+                <span style={{ width: 82, color: '#00d4ff' }}>{label}</span>
+                <span style={{ color: '#555', width: 78 }}>{bal}</span>
+                <span style={{ color: '#aaa' }}>{desc}</span>
               </div>
             ))}
 
-            <div style={{ fontWeight: 'bold', margin: '12px 0 6px' }}>KEYBOARD SHORTCUTS</div>
-            <div style={{ color: '#aaa', lineHeight: 1.8 }}>
+            <div style={{ fontWeight: 'bold', margin: '14px 0 8px' }}>IN-GAME TOKEN BOOSTS</div>
+            <div style={{ color: '#aaa', marginBottom: 4 }}>
+              Hold any amount in your connected wallet:
+            </div>
+            {[
+              ['$CLANKER',     'https://www.clanker.world/clanker/0x1bc0c42215582d5A085795f4baDbaC3ff36d1Bcb'],
+              ['$BNKR',        'https://www.clanker.world/clanker/0x22aF33FE49fD1Fa80c7149773dDe5890D3c76F3b'],
+              ['$DRB',         'https://dexscreener.com/base/0x3ec2156d4c0a9cbdab4a016633b7bcf6a8d68ea2'],
+              ['$DIMES',       'https://dexscreener.com/base/0x17d70172C7C4205bd39ce80F7f0ee660B7Dc5A23'],
+              ['$auctobot001', 'https://www.clanker.world/clanker/0x30e187bB79D539db798c66F4d37183491405Cb07'],
+              ['$clawnch',     'https://dexscreener.com/base/0xa1f72459dfa10bad200ac160ecd78c6b77a747be'],
+            ].map(([name, url]) => (
+              <div key={name} style={{ marginBottom: 3 }}>
+                <a href={url} target="_blank" rel="noopener noreferrer"
+                  style={{ color: '#00d4ff', textDecoration: 'none' }}
+                  onMouseOver={e => e.target.style.textDecoration = 'underline'}
+                  onMouseOut={e => e.target.style.textDecoration = 'none'}
+                >{name}</a>
+              </div>
+            ))}
+
+            <div style={{ fontWeight: 'bold', margin: '14px 0 8px' }}>KEYBOARD SHORTCUTS</div>
+            <div style={{ color: '#aaa', lineHeight: 1.9 }}>
               1–8 &nbsp; Travel to location<br />
               B &nbsp;&nbsp;&nbsp; Buy selected resource<br />
               S &nbsp;&nbsp;&nbsp; Sell selected resource<br />
