@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { LOCATIONS, LOCATION_LIST, AGENT_TIERS, STAKING_TIERS } from '../game/constants.js';
 import { getNetEth } from '../game/engine.js';
 
@@ -34,6 +34,7 @@ export default function Terminal({
   tickerPrices = {},
   tickerTrend  = {},
 }) {
+  const [showInfo, setShowInfo] = useState(false);
   const netEth    = getNetEth(game);
   const canEscape = netEth > 0;
   const tierInfo  = AGENT_TIERS[agentTier] || AGENT_TIERS.NORMAL;
@@ -289,6 +290,70 @@ export default function Terminal({
 
       {/* ── News ticker ────────────────────────────────────────── */}
       <NewsTicker feed={botchanFeed} online={botchanOnline} />
+
+      {/* ── INFO button ────────────────────────────────────────── */}
+      <button
+        className="btn"
+        onClick={() => setShowInfo(true)}
+        style={{ position: 'fixed', bottom: 36, right: 12, fontSize: 10, zIndex: 100 }}
+      >
+        [INFO]
+      </button>
+
+      {/* ── INFO modal ─────────────────────────────────────────── */}
+      {showInfo && (
+        <div
+          onClick={() => setShowInfo(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200,
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: '#050f05', border: '1px solid #00ff41', padding: '20px 24px',
+              fontFamily: "'Courier New', monospace", color: '#00ff41', fontSize: 12,
+              maxWidth: 480, width: '90%', maxHeight: '80vh', overflowY: 'auto',
+            }}
+          >
+            <div style={{ fontWeight: 'bold', fontSize: 14, marginBottom: 12, letterSpacing: 2 }}>
+              $SURVIVE — HOW TO PLAY
+            </div>
+
+            <div style={{ marginBottom: 10, color: '#aaa' }}>
+              Dope Wars on Base. Trade 6 resources across 8 locations over 30 turns.
+              Escape with NET ETH &gt; 0 to win. The agent treasury must stay alive.
+            </div>
+
+            <div style={{ fontWeight: 'bold', marginBottom: 6 }}>STAKING TIERS</div>
+            {Object.values(STAKING_TIERS).map(t => (
+              <div key={t.id} style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
+                <span style={{ width: 90, color: '#00d4ff' }}>{t.label}</span>
+                <span style={{ color: '#555', width: 80 }}>{t.minBalance.toLocaleString()}+</span>
+                <span style={{ color: '#aaa' }}>{t.desc}</span>
+              </div>
+            ))}
+
+            <div style={{ fontWeight: 'bold', margin: '12px 0 6px' }}>KEYBOARD SHORTCUTS</div>
+            <div style={{ color: '#aaa', lineHeight: 1.8 }}>
+              1–8 &nbsp; Travel to location<br />
+              B &nbsp;&nbsp;&nbsp; Buy selected resource<br />
+              S &nbsp;&nbsp;&nbsp; Sell selected resource<br />
+              E &nbsp;&nbsp;&nbsp; Escape (if NET &gt; 0)<br />
+              P &nbsp;&nbsp;&nbsp; Pass turn
+            </div>
+
+            <button
+              className="btn btn-cyan"
+              onClick={() => setShowInfo(false)}
+              style={{ marginTop: 16, fontSize: 11 }}
+            >
+              [CLOSE]
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
