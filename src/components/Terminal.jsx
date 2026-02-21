@@ -377,13 +377,33 @@ export default function Terminal({
               P &nbsp;&nbsp;&nbsp; Pass turn
             </div>
 
-            <button
-              className="btn btn-cyan"
-              onClick={() => setShowInfo(false)}
-              style={{ marginTop: 16, fontSize: 11 }}
-            >
-              [CLOSE]
-            </button>
+            <div style={{ marginTop: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button
+                className="btn btn-cyan"
+                onClick={() => setShowInfo(false)}
+                style={{ fontSize: 11 }}
+              >
+                [CLOSE]
+              </button>
+              <a
+                href="https://x.com/auctobot001"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: '#00d4ff',
+                  fontSize: 11,
+                  fontFamily: 'inherit',
+                  textDecoration: 'none',
+                  border: '1px solid #00d4ff',
+                  padding: '4px 12px',
+                  letterSpacing: 1,
+                }}
+                onMouseOver={e => e.currentTarget.style.background = 'rgba(0,212,255,0.1)'}
+                onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+              >
+                [CONTACT @auctobot001]
+              </a>
+            </div>
           </div>
         </div>
       )}
