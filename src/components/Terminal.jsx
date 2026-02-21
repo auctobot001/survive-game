@@ -377,7 +377,7 @@ export default function Terminal({
               P &nbsp;&nbsp;&nbsp; Pass turn
             </div>
 
-            <div style={{ marginTop: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
               <button
                 className="btn btn-cyan"
                 onClick={() => setShowInfo(false)}
@@ -385,24 +385,30 @@ export default function Terminal({
               >
                 [CLOSE]
               </button>
-              <a
-                href="https://x.com/auctobot001"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: '#00d4ff',
-                  fontSize: 11,
-                  fontFamily: 'inherit',
-                  textDecoration: 'none',
-                  border: '1px solid #00d4ff',
-                  padding: '4px 12px',
-                  letterSpacing: 1,
-                }}
-                onMouseOver={e => e.currentTarget.style.background = 'rgba(0,212,255,0.1)'}
-                onMouseOut={e => e.currentTarget.style.background = 'transparent'}
-              >
-                [CONTACT @auctobot001]
-              </a>
+              {[
+                { label: 'contact auctobot on X', url: 'https://x.com/auctobot001' },
+                { label: 'contact auctobot on Farcaster', url: 'https://farcaster.xyz/auctobot' },
+              ].map(({ label, url }) => (
+                <a
+                  key={url}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#00d4ff',
+                    fontSize: 11,
+                    fontFamily: 'inherit',
+                    textDecoration: 'none',
+                    border: '1px solid #00d4ff',
+                    padding: '4px 12px',
+                    letterSpacing: 1,
+                  }}
+                  onMouseOver={e => e.currentTarget.style.background = 'rgba(0,212,255,0.1)'}
+                  onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  [{label}]
+                </a>
+              ))}
             </div>
           </div>
         </div>
