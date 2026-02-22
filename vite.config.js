@@ -11,9 +11,5 @@ export default defineConfig({
       },
     },
   },
-  build: {
-    rollupOptions: {
-      external: ['@pigment-css/react']
-    }
-  },
+  build: {},
 });
