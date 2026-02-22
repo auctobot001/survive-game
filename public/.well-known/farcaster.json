@@ -1,0 +1,17 @@
+{
+  "accountAssociation": {
+    "header": "REPLACE_AFTER_SIGNING",
+    "payload": "REPLACE_AFTER_SIGNING",
+    "signature": "REPLACE_AFTER_SIGNING"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "$SURVIVE: The Game",
+    "iconUrl": "https://survivecrypto.app/icon.png",
+    "homeUrl": "https://survivecrypto.app",
+    "imageUrl": "https://survivecrypto.app/og-image.png",
+    "buttonTitle": "🎮 Play $SURVIVE",
+    "splashImageUrl": "https://survivecrypto.app/icon.png",
+    "splashBackgroundColor": "#0d0d0d"
+  }
+}
