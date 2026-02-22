@@ -15,6 +15,7 @@ const BOOST_TOKENS = [
   { name: '$alpha',       address: '0x3D01Fe5A38ddBD307fDd635b4Cb0e29681226D6f', url: 'https://dexscreener.com/base/0x3D01Fe5A38ddBD307fDd635b4Cb0e29681226D6f' },
   { name: '$botchan',     address: '0xD77d781921A33793a46e5bb6a7bb52edb7DbBb07', url: 'https://dexscreener.com/base/0xD77d781921A33793a46e5bb6a7bb52edb7DbBb07' },
   { name: '$🟩🦞',        address: '0x00BB032296e0C580E21010a5a6A4E007E0953E68', url: 'https://dexscreener.com/base/0x00BB032296e0C580E21010a5a6A4E007E0953E68' },
+  { name: '$shovel',      address: '0xbd3Dc49AF8A366705190Dbb9aaE4E92067f2DbA3', url: 'https://dexscreener.com/base/0xbd3Dc49AF8A366705190Dbb9aaE4E92067f2DbA3' },
 ];
 
 function useBoostTokenBalances() {

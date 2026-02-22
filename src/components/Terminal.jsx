@@ -358,6 +358,7 @@ export default function Terminal({
               ['$alpha',       'https://dexscreener.com/base/0x3D01Fe5A38ddBD307fDd635b4Cb0e29681226D6f'],
               ['$botchan',     'https://dexscreener.com/base/0xD77d781921A33793a46e5bb6a7bb52edb7DbBb07'],
               ['$🟩🦞',        'https://dexscreener.com/base/0x00BB032296e0C580E21010a5a6A4E007E0953E68'],
+              ['$shovel',      'https://dexscreener.com/base/0xbd3Dc49AF8A366705190Dbb9aaE4E92067f2DbA3'],
             ].map(([name, url]) => (
               <div key={name} style={{ marginBottom: 3 }}>
                 <a href={url} target="_blank" rel="noopener noreferrer"
